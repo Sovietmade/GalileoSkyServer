@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace GalileoSkyServer
 {
-    class TcpConnection
+    interface IGalileoSkyServer
     {
+        void BeginListenForIncomingConnections();
+
     }
-
-
 }

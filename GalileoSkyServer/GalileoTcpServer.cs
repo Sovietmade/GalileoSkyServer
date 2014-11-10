@@ -8,13 +8,16 @@ using System.Net;
 
 namespace GalileoSkyServer
 {
-    class TcpServer
-    {
-        TcpListener mListener;
 
-        public TcpServer()
+    class GalileoTcpServer : IGalileoSkyServer
+    {
+
+        public GalileoTcpServer()
         {
             mListener = new TcpListener(IPAddress.Any, 5555);
+
+            mListOfConnectedClients = new List<GalileoTcpClient>();
+            mListOfConnectedClientsLock = new object();
         }
 
         public void BeginListenForIncomingConnections()
@@ -32,10 +35,29 @@ namespace GalileoSkyServer
             TcpClient client = listener.EndAcceptTcpClient(ar);
             //now create a TcpConnection wrapper around TcpClient,add it to connections list.
 
+            GalileoTcpClient galileoTcpClient = new GalileoTcpClient(client, 2048);
+            IDataParser dataParser = new GalileoSkyTcpPackageParser();
+            galileoTcpClient.DataParser = dataParser;
+
+            lock (mListOfConnectedClientsLock)
+            {
+                mListOfConnectedClients.Add(galileoTcpClient);
+            }
+
             // Process the connection here. (Add the client to a 
             // server table, read data, etc.)
             Console.WriteLine("Client connected completed");
         }
+
+        #region TcpServerFields
+
+        TcpListener mListener;
+
+        object mListOfConnectedClientsLock;
+
+        List<GalileoTcpClient> mListOfConnectedClients;
+
+        #endregion
 
     }
 }

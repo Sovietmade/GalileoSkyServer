@@ -41,10 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IDataParser.cs" />
+    <Compile Include="IGalileoSkyClient.cs" />
+    <Compile Include="IGalileoSkyServer.cs" />
+    <Compile Include="Package.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TcpConnection.cs" />
-    <Compile Include="TcpServer.cs" />
+    <Compile Include="GalileoTcpClient.cs" />
+    <Compile Include="GalileoTcpServer.cs" />
+    <Compile Include="ReceivedDataArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
