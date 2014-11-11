@@ -30,6 +30,31 @@ namespace GalileoSkyServer
             //Parsing data...
             int msgStart = 0;
 
+            //There are have to be a header and packet length fields to process packet further
+
+            if (tempTotalData.Length >= 3)
+            { 
+                //1.Get the package length field value
+                //2.If tempTotalData.Length == package length + 5 (1 byte for header,2 for packet length field, 2 for control sum)
+                //  2.1 then parse the buffer.
+                //3.else there is nothing to do
+                if (tempTotalData[0] == 0x01)
+                {
+                    
+                }
+
+                else if (tempTotalData[0] == 0x02)
+                {
+
+                }
+
+                else
+                {
+                    throw new InvalidDataException("Header of the packet is maleformed");
+                }
+               
+            }
+
             for (int i = 0; i < tempTotalData.Length - 1; i++)
             {
 

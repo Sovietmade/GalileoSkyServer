@@ -8,20 +8,58 @@ namespace GalileoSkyServer
 {
     public abstract class Package
     {
+        public abstract byte[] ToByteArray();
 
     }
 
-    public class GalileoSkyTcpPackage : Package
+    public abstract class GalileoSkyTcpPackage : Package
     {
-        #region GalileoSkyTcpPackage fields
+        #region Package fields
 
-        byte header;
+        protected byte header;
 
-        byte[] packageLength = new byte[2];
-
-        byte[] controlSum = new byte[2];
+        protected byte[] controlSum = new byte[2];
 
         #endregion
     }
 
+    public class GalileoSkyTcpPackageResponse : GalileoSkyTcpPackage
+    {
+
+        public GalileoSkyTcpPackageResponse()
+        {
+
+        }
+
+        public override byte[] ToByteArray()
+        {
+            byte[] PackageAsByteArray = new byte[1 + controlSum.Length];
+            PackageAsByteArray[0] = header;
+            Array.Copy(controlSum, 0, PackageAsByteArray, 1, controlSum.Length);
+            return PackageAsByteArray;
+        }
+
+    }
+
+    public class GalileoSkyTcpPackageData : GalileoSkyTcpPackage
+    {
+
+        public GalileoSkyTcpPackageData()
+        {
+
+        }
+
+        public override byte[] ToByteArray()
+        {
+            throw new NotImplementedException();
+        }
+
+        #region GalileoSkyTcpPackageData fields
+
+
+        byte[] packageLength = new byte[2];
+
+
+        #endregion
+    }
 }

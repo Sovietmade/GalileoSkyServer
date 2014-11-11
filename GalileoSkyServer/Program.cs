@@ -10,6 +10,10 @@ namespace GalileoSkyServer
     {
         static void Main(string[] args)
         {
+            IGalileoSkyServer galileoTcpServer = new GalileoTcpServer();
+            galileoTcpServer.StartServer();
+            galileoTcpServer.BeginListenForIncomingConnections();
+            Console.ReadKey();
         }
     }
 }

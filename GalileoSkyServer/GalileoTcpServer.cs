@@ -20,6 +20,11 @@ namespace GalileoSkyServer
             mListOfConnectedClientsLock = new object();
         }
 
+        public void StartServer()
+        {
+            mListener.Start();
+        }
+
         public void BeginListenForIncomingConnections()
         {
             mListener.BeginAcceptTcpClient(DoAcceptTcpClientCallback, mListener);

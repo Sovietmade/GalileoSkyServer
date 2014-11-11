@@ -8,6 +8,7 @@ namespace GalileoSkyServer
 {
     interface IGalileoSkyServer
     {
+        void StartServer();
         void BeginListenForIncomingConnections();
 
     }
