@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reflection;
 
 namespace GalileoSkyServer
 {
@@ -15,6 +16,18 @@ namespace GalileoSkyServer
 
     public class GalileoSkyTcpPackageParser : IDataParser
     {
+
+        public GalileoSkyTcpPackageParser()
+        {
+            var Methods = from mi in this.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod)
+                          from attr in mi.GetCustomAttributes(typeof(PackageDataHandlerAttribute), true).Cast<PackageDataHandlerAttribute>()
+                          select new { Method = mi, Tag = attr.Tag };
+            foreach (var m in Methods)
+            {
+                mDataHandlersMap[m.Tag] = m.Method;
+            }
+        }
+
         public Package AddDataAndParse(byte[] inData)
         {
             //Collecting all data from mMessageBuffer and inData in the single buffer - tempTotalData.
@@ -68,8 +81,31 @@ namespace GalileoSkyServer
         }
 
 
+        [PackageDataHandler(0x01)]
+        UInt32 HardwareVersionDataHandler(byte[] inData)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PackageDataHandler(0x02)]
+        UInt32 SoftwareVersionDataHandler(byte[] inData)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PackageDataHandler(0x03)]
+        String ImeiDataHandler(byte[] inData)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region GalileoSkyTcpPackageParser fields
+
+        Dictionary<Int32, MethodInfo> mDataHandlersMap = new Dictionary<int, MethodInfo>();
 
         MemoryStream mMessagesBuffer = new MemoryStream();
+
+        #endregion
 
     }
 
