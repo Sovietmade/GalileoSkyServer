@@ -17,7 +17,7 @@ namespace GalileoSkyServer
             
             Buffer = new byte[inReceiveBufferLength];
             
-            OutcomingMessagesQ = new Queue<String>();
+            OutcomingMessagesQ = new Queue<byte[]>();
             
             isSending = false;
 
@@ -26,11 +26,11 @@ namespace GalileoSkyServer
 
         #region ---------SendingRegion---------
 
-        public void SendMessage(string inMessage)
+        public void SendMessage(byte[] inByte)
         {
             lock (OutcomingMessagesQ)
             {
-                OutcomingMessagesQ.Enqueue(inMessage);
+                OutcomingMessagesQ.Enqueue(inByte);
             }
             SendMessageCallback(null);
         }
@@ -49,7 +49,7 @@ namespace GalileoSkyServer
                 }
             }
 
-            string CurrentMessage = null;
+            byte[] CurrentMessage = null;
 
             lock (OutcomingMessagesQ)
             {
@@ -72,7 +72,7 @@ namespace GalileoSkyServer
             if (CurrentMessage != null && mNetworkStream != null)
             {
 
-                mNetworkStream.BeginWrite(Encoding.UTF8.GetBytes(CurrentMessage), 0, Encoding.UTF8.GetBytes(CurrentMessage).Length, new AsyncCallback(SendMessageCallback), null);
+                mNetworkStream.BeginWrite(CurrentMessage, 0, CurrentMessage.Length, new AsyncCallback(SendMessageCallback), null);
 
             }
         }
@@ -92,11 +92,18 @@ namespace GalileoSkyServer
                     byte[] ReceivedData = new byte[receivedDataLength];
                     Array.Copy(Buffer, ReceivedData, receivedDataLength);
 
+                    if (receivedDataLength > 0)
+                    {
+                        Console.WriteLine("Received {0} bytes:\n {1}", receivedDataLength, Encoding.UTF8.GetString(Buffer));
+                    }
+
                     if (DataParser != null)
                     {
-                        if (DataParser.AddDataAndParse(ReceivedData) != null)
+                        GalileoSkyTcpPackage package = DataParser.AddDataAndParse(ReceivedData);
+                        if (package != null)
                         {
-
+                            GalileoSkyTcpPackageResponse galileoSkyTcpPackageResponse = new GalileoSkyTcpPackageResponse();
+                            galileoSkyTcpPackageResponse.ControlSum = package.ControlSum;
                         }
                     }
 
@@ -142,7 +149,7 @@ namespace GalileoSkyServer
 
         protected byte[] Buffer;
 
-        protected Queue<String> OutcomingMessagesQ;
+        protected Queue<byte[]> OutcomingMessagesQ;
 
         protected bool isSending;
 

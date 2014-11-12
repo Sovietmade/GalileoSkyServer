@@ -52,6 +52,7 @@ namespace GalileoSkyServer
             // Process the connection here. (Add the client to a 
             // server table, read data, etc.)
             Console.WriteLine("Client connected completed");
+            mListener.BeginAcceptTcpClient(DoAcceptTcpClientCallback, mListener);
         }
 
         #region TcpServerFields

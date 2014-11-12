@@ -8,7 +8,7 @@ namespace GalileoSkyServer
 {
     interface IGalileoSkyClient
     {
-        void SendMessage(string inMessage);
+        void SendMessage(byte[] inMessage);
 
         event EventHandler<ReceivedDataArgs> DataReceived;
 

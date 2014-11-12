@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GalileoSkyData.cs" />
     <Compile Include="IDataParser.cs" />
     <Compile Include="IGalileoSkyClient.cs" />
     <Compile Include="IGalileoSkyServer.cs" />

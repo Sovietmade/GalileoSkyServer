@@ -4,9 +4,9 @@ C:\Users\Yuri\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\bin\Debug\Galil
 C:\Users\Yuri\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\bin\Debug\GalileoSkyServer.pdb
 C:\Users\Yuri\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.exe
 C:\Users\Yuri\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.pdb
+C:\Users\Yuri\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.csprojResolveAssemblyReference.cache
 C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\bin\Debug\GalileoSkyServer.exe.config
-C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.exe
-C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.pdb
 C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\bin\Debug\GalileoSkyServer.exe
 C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\bin\Debug\GalileoSkyServer.pdb
-C:\Users\Yuri\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.csprojResolveAssemblyReference.cache
+C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.exe
+C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.pdb
