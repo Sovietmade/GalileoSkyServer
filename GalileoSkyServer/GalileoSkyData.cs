@@ -15,6 +15,11 @@ namespace GalileoSkyServer
         public object Data{ get; set; }
 
         public Type TypeOfData{ get; set; }
+
+        public byte[] ToByte()
+        {
+            return TypeOfData != null ? (byte[])TypeOfData.GetMethod("ToByte").Invoke(Data, null) : null;
+        }
     }
 
 
@@ -33,6 +38,11 @@ namespace GalileoSkyServer
 
         public byte HW { get; set; }
 
+        public byte[] ToByte()
+        {
+            return new byte[1] { HW };
+        }
+
     }
 
     public class SoftwareVersion
@@ -48,6 +58,11 @@ namespace GalileoSkyServer
         }
 
         public byte SW { get; set; }
+
+        public byte[] ToByte()
+        {
+            return new byte[1] { SW };
+        }
     }
 
     public class ImeiData
@@ -62,6 +77,11 @@ namespace GalileoSkyServer
             IMEI = inIMEI;
         }
         public String IMEI { get; set; }
+
+        public byte[] ToByte()
+        {
+            return Encoding.ASCII.GetBytes(IMEI);
+        }
     }
 
     public class TerminalID
@@ -77,6 +97,11 @@ namespace GalileoSkyServer
         }
 
         public UInt16 TerminalIDData { get; set; }
+
+        public byte[] ToByte()
+        {
+            return BitConverter.GetBytes(TerminalIDData);
+        }
     }
 
     public class PackageNumer
