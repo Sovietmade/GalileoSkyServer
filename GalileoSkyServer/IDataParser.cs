@@ -338,6 +338,29 @@ namespace GalileoSkyServer
             return gsd;
         }
 
+        [PackageDataHandler(0x40)]
+        GalileoSkyData DeviceStatus(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0x40;
+
+            byte[] deviceStatusByteArray = new byte[2];
+            deviceStatusByteArray[0] = inData[1];
+            deviceStatusByteArray[1] = inData[2];
+
+            DeviceStatus deviceStatus = new DeviceStatus(deviceStatusByteArray);
+
+
+            gsd.Data = deviceStatus;
+            gsd.TypeOfData = typeof(DeviceStatus);
+
+            CutArray(ref inData, 3, inData.Length - 1);
+
+            Console.WriteLine("{0}", deviceStatus.ToString());
+            return gsd;
+        }
+
         #region GalileoSkyTcpPackageParser fields
 
         Dictionary<Int32, MethodInfo> mDataHandlersMap = new Dictionary<int, MethodInfo>();

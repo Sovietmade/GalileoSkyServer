@@ -217,45 +217,69 @@ namespace GalileoSkyServer
             else 
             {
                 BitArray ba = new BitArray(inDeviceStatus);
-                Movement = Convert.ToByte(ba.Get(0));
-                Slope = Convert.ToByte(ba.Get(1));
-                iButton = Convert.ToByte(ba.Get(2));
-                SIM = Convert.ToByte(ba.Get(3));
-                GeoZone = Convert.ToByte(ba.Get(4));
-                InnerPowerSupplyVoltage = Convert.ToByte(ba.Get(5));
-                GPSAntenna = Convert.ToByte(ba.Get(6));
-                InnerPowerSupplyBusVoltage = Convert.ToByte(ba.Get(7));
-                OuterVoltage = Convert.ToByte(ba.Get(8));
-                CarStatus = Convert.ToByte(ba.Get(9));
-                Hit = Convert.ToByte(ba.Get(10));
-                GpsOrGlonass = Convert.ToByte(ba.Get(11));
-                Signaling = Convert.ToByte(ba.Get(14));
-                Alarm = Convert.ToByte(ba.Get(15));
+                Movement = ba.Get(0);
+                Slope = ba.Get(1);
+                iButton = ba.Get(2);
+                SIM = ba.Get(3);
+                GeoZone = ba.Get(4);
+                InnerPowerSupplyVoltage = ba.Get(5);
+                GPSAntenna = ba.Get(6);
+                InnerPowerSupplyBusVoltage = ba.Get(7);
+                OuterVoltage = ba.Get(8);
+                CarStatus = ba.Get(9);
+                Hit = ba.Get(10);
+                GpsOrGlonass = ba.Get(11);
+                Signaling = ba.Get(14);
+                Alarm = ba.Get(15);
 
-                SignalQuality = 
+                byte bSignalQuality = 0;
+                if (ba.Get(12))
+                {
+                    bSignalQuality = (byte)(bSignalQuality ^ 1);
+                }
+                if (ba.Get(13))
+                {
+                    bSignalQuality = (byte)(bSignalQuality ^ (1 << 1));
+                }
+                SignalQuality = bSignalQuality;
             }
         }
 
-        public Byte Movement { get; set; }
-        public Byte Slope { get; set; }
-        public Byte iButton { get; set; }
-        public Byte SIM { get; set; }
-        public Byte GeoZone { get; set; }
-        public Byte InnerPowerSupplyVoltage { get; set; }
-        public Byte GPSAntenna { get; set; }
-        public Byte InnerPowerSupplyBusVoltage { get; set; }
-        public Byte OuterVoltage { get; set; }
-        public Byte CarStatus { get; set; }
-        public Byte Hit { get; set; }
-        public Byte GpsOrGlonass { get; set; }
+        public bool Movement { get; set; }
+        public bool Slope { get; set; }
+        public bool iButton { get; set; }
+        public bool SIM { get; set; }
+        public bool GeoZone { get; set; }
+        public bool InnerPowerSupplyVoltage { get; set; }
+        public bool GPSAntenna { get; set; }
+        public bool InnerPowerSupplyBusVoltage { get; set; }
+        public bool OuterVoltage { get; set; }
+        public bool CarStatus { get; set; }
+        public bool Hit { get; set; }
+        public bool GpsOrGlonass { get; set; }
         public Byte SignalQuality { get; set; }
-        public Byte Signaling { get; set; }
-        public Byte Alarm { get; set; }
+        public bool Signaling { get; set; }
+        public bool Alarm { get; set; }
 
 
         public override string ToString()
         {
-            return null;
+            return "Device status: " +
+                " Movement: " + (Movement ? "1" : "0") +
+                " Slope: " + (Slope ? "1" : "0") +
+                " iButton: " + (iButton ? "1" : "0") +
+                " SIM: " + (SIM ? "1" : "0") +
+                " GeoZone: " + (GeoZone ? "1" : "0") +
+                " InnerPowerSupplyVoltage: " + (InnerPowerSupplyVoltage ? "1" : "0") +
+                " GPSAntenna: " + (GPSAntenna ? "1" : "0") +
+                " InnerPowerSupplyBusVoltage: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
+                " OuterVoltage: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
+                " CarStatus: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
+                " Hit: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
+                " GpsOrGlonass: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
+                " SignalQuality: " + SignalQuality +
+                " Signaling: " + (Signaling ? "1" : "0") +
+                " Alarm: " + (Alarm ? "1" : "0");
         }
 
     }
