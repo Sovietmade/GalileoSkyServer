@@ -253,6 +253,91 @@ namespace GalileoSkyServer
             return gsd;
         }
 
+        [PackageDataHandler(0x30)]
+        GalileoSkyData CoordinatesAndSatellites(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0x30;
+
+            CoordinatesAndSatellites cordinatesAndSatellites = new CoordinatesAndSatellites();
+            byte satellitesAndCorrectness = inData[1];
+            byte satellites = (byte)(satellitesAndCorrectness & 0x0F);
+            byte correctness = (byte)(satellitesAndCorrectness & 0xF0);
+
+            cordinatesAndSatellites.SatellitesAmount = satellites;
+            cordinatesAndSatellites.Correctness = correctness;
+
+            cordinatesAndSatellites.Latitude =  BitConverter.ToInt32(inData, 2);
+            cordinatesAndSatellites.Longitude = BitConverter.ToInt32(inData, 6);
+
+            gsd.Data = cordinatesAndSatellites;
+            gsd.TypeOfData = typeof(CoordinatesAndSatellites);
+
+            CutArray(ref inData, 10, inData.Length - 1);
+
+            Console.WriteLine("{0}", cordinatesAndSatellites.ToString());
+            return gsd;
+        }
+
+        [PackageDataHandler(0x33)]
+        GalileoSkyData SpeedAndDirection(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0x33;
+
+            SpeedAndDirection speedAndDirection = new SpeedAndDirection();
+            speedAndDirection.Speed = (UInt16)(BitConverter.ToUInt16(inData, 1) / (UInt16)10);
+            speedAndDirection.Direction = (UInt16)(BitConverter.ToUInt16(inData, 3) / (UInt16)10);
+
+            gsd.Data = speedAndDirection;
+            gsd.TypeOfData = typeof(SpeedAndDirection);
+
+            CutArray(ref inData, 5, inData.Length - 1);
+
+            Console.WriteLine("{0}", speedAndDirection.ToString());
+            return gsd;
+        }
+
+        [PackageDataHandler(0x34)]
+        GalileoSkyData Height(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0x34;
+
+            Height height = new Height();
+            height.HeightData = BitConverter.ToInt16(inData, 1);
+
+            gsd.Data = height;
+            gsd.TypeOfData = typeof(Height);
+
+            CutArray(ref inData, 3, inData.Length - 1);
+
+            Console.WriteLine("{0}", height.ToString());
+            return gsd;
+        }
+
+        [PackageDataHandler(0x35)]
+        GalileoSkyData HDOP(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0x35;
+
+            HDOP hdop = new HDOP();
+            hdop.HDOPData = inData[1];
+
+            gsd.Data = hdop;
+            gsd.TypeOfData = typeof(HDOP);
+
+            CutArray(ref inData, 2, inData.Length - 1);
+
+            Console.WriteLine("{0}", hdop.ToString());
+            return gsd;
+        }
+
         #region GalileoSkyTcpPackageParser fields
 
         Dictionary<Int32, MethodInfo> mDataHandlersMap = new Dictionary<int, MethodInfo>();
