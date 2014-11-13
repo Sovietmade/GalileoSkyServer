@@ -185,7 +185,8 @@ namespace GalileoSkyServer
             gsd.Tag = 0x03;
 
             ImeiData imei = new ImeiData();
-            imei.IMEI = BitConverter.ToString(inData, 1, 15);
+
+            imei.IMEI = Encoding.ASCII.GetString(inData, 1, 15);
 
             gsd.Data = imei;
             gsd.TypeOfData = typeof(ImeiData);

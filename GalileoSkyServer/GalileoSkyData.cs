@@ -26,12 +26,12 @@ namespace GalileoSkyServer
         
         }
 
-        public HardwareVersion(UInt32 inHW)
+        public HardwareVersion(byte inHW)
         {
             HW = inHW;
         }
 
-        public UInt32 HW { get; set; }
+        public byte HW { get; set; }
 
     }
 
@@ -42,12 +42,12 @@ namespace GalileoSkyServer
 
         }
 
-        public SoftwareVersion(UInt32 inSW)
+        public SoftwareVersion(byte inSW)
         {
             SW = inSW;
         }
 
-        public UInt32 SW { get; set; }
+        public byte SW { get; set; }
     }
 
     public class ImeiData
@@ -71,12 +71,12 @@ namespace GalileoSkyServer
         
         }
 
-        public TerminalID(UInt32 inTerminalID)
+        public TerminalID(UInt16 inTerminalID)
         {
             TerminalIDData = inTerminalID;
         }
 
-        public UInt32 TerminalIDData { get; set; }
+        public UInt16 TerminalIDData { get; set; }
     }
 
     public class PackageNumer
@@ -86,12 +86,12 @@ namespace GalileoSkyServer
 
         }
 
-        public PackageNumer(UInt32 inPackageNumer)
+        public PackageNumer(UInt16 inPackageNumer)
         {
             PackageNumerData = inPackageNumer;
         }
 
-        public UInt32 PackageNumerData { get; set; }
+        public UInt16 PackageNumerData { get; set; }
     }
 
     public class DateAndTime
@@ -123,8 +123,8 @@ namespace GalileoSkyServer
 
         }
 
-        public UInt32 SatellitesAmount { get; set; }
-        public UInt32 Correctness { get; set; }
+        public byte SatellitesAmount { get; set; }
+        public byte Correctness { get; set; }
         public Int32 Latitude { get; set;}
         public Int32 Longitude { get; set; }
 
@@ -142,8 +142,8 @@ namespace GalileoSkyServer
 
         }
 
-        public UInt32 Speed { get; set; }
-        public UInt32 Direction { get; set; }
+        public UInt16 Speed { get; set; }
+        public UInt16 Direction { get; set; }
     
 
         public override string ToString()
@@ -160,12 +160,12 @@ namespace GalileoSkyServer
 
         }
 
-        public Height(Int32 inHeightData)
+        public Height(Int16 inHeightData)
         {
             HeightData = inHeightData;
         }
 
-        public Int32 HeightData { get; set; }
+        public Int16 HeightData { get; set; }
 
         public override string ToString()
         {
@@ -181,12 +181,12 @@ namespace GalileoSkyServer
 
         }
 
-        public HDOP(UInt32 inHDOPData)
+        public HDOP(byte inHDOPData)
         {
             HDOPData = inHDOPData;
         }
 
-        public UInt32 HDOPData { get; set; }
+        public byte HDOPData { get; set; }
 
         public override string ToString()
         {
