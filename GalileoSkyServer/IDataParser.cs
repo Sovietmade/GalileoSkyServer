@@ -54,6 +54,7 @@ namespace GalileoSkyServer
                 //3.else there is nothing to do
                 if (tempTotalData[0] == 0x01)
                 {
+                    Console.WriteLine("-----------New Packet------------");
                     Console.WriteLine("Header: {0}", tempTotalData[0]);
 
                     byte[] bytearrayPackageLength = new byte[2];
@@ -85,7 +86,7 @@ namespace GalileoSkyServer
                         tempTotalData = trimmedTempTotalData;
 
                         object[] paramsArr = new object[] { toParse };
-                        while (toParse != null)
+                        while (((byte[])paramsArr[0]) != null && ((byte[])paramsArr[0]).Length > 0)
                         {
                             byte[] tempArr = (byte[])paramsArr[0];
 
@@ -96,9 +97,11 @@ namespace GalileoSkyServer
                                 galileoSkyTcpPackageData.AddGalileoSkyData(gsd);
                             }
                             else {
-                                toParse = null;
+                                paramsArr[0] = null;
                             }
                         }
+                        Console.WriteLine("-----------End------------");
+                        Console.WriteLine("");
                         
                     }
                     else 
@@ -190,6 +193,63 @@ namespace GalileoSkyServer
             CutArray(ref inData, 16, inData.Length - 1);
 
             Console.WriteLine("IMEI: {0}", imei.IMEI);
+            return gsd;
+        }
+
+        [PackageDataHandler(0x04)]
+        GalileoSkyData TerminalID(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0x04;
+
+            TerminalID terminalId = new TerminalID();
+            terminalId.TerminalIDData = BitConverter.ToUInt16(inData, 1);
+
+            gsd.Data = terminalId;
+            gsd.TypeOfData = typeof(TerminalID);
+
+            CutArray(ref inData, 3, inData.Length - 1);
+
+            Console.WriteLine("Terminal ID: {0}", terminalId.TerminalIDData);
+            return gsd;
+        }
+
+        [PackageDataHandler(0x10)]
+        GalileoSkyData PackageNumber(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0x10;
+
+            PackageNumer packageNumber = new PackageNumer();
+            packageNumber.PackageNumerData = BitConverter.ToUInt16(inData, 1);
+
+            gsd.Data = packageNumber;
+            gsd.TypeOfData = typeof(PackageNumer);
+
+            CutArray(ref inData, 3, inData.Length - 1);
+
+            Console.WriteLine("Package number: {0}", packageNumber.PackageNumerData);
+            return gsd;
+        }
+
+        [PackageDataHandler(0x20)]
+        GalileoSkyData DateAndTime(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0x20;
+
+            DateAndTime dateAndTime = new DateAndTime();
+            dateAndTime.DateAndTimeData = BitConverter.ToUInt32(inData, 1);
+
+            gsd.Data = dateAndTime;
+            gsd.TypeOfData = typeof(DateAndTime);
+
+            CutArray(ref inData, 5, inData.Length - 1);
+
+            Console.WriteLine("Date is: {0}", dateAndTime.ActualDateAndTime.ToString());
             return gsd;
         }
 

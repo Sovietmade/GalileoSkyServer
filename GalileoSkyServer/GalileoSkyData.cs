@@ -63,4 +63,56 @@ namespace GalileoSkyServer
         public String IMEI { get; set; }
     }
 
+    public class TerminalID
+    {
+        public TerminalID()
+        { 
+        
+        }
+
+        public TerminalID(UInt32 inTerminalID)
+        {
+            TerminalIDData = inTerminalID;
+        }
+
+        public UInt32 TerminalIDData { get; set; }
+    }
+
+    public class PackageNumer
+    {
+        public PackageNumer()
+        {
+
+        }
+
+        public PackageNumer(UInt32 inPackageNumer)
+        {
+            PackageNumerData = inPackageNumer;
+        }
+
+        public UInt32 PackageNumerData { get; set; }
+    }
+
+    public class DateAndTime
+    {
+        public DateAndTime()
+        {
+
+        }
+
+        public DateAndTime(UInt32 inDateAndTime)
+        {
+            DateAndTimeData = inDateAndTime;
+        }
+
+        public UInt32 DateAndTimeData { get; set; }
+        public DateTime ActualDateAndTime
+        {
+            get {
+                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                return epoch.AddSeconds(DateAndTimeData);
+            }
+        }
+    }
+
 }
