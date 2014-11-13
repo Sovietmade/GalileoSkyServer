@@ -94,7 +94,7 @@ namespace GalileoSkyServer
 
                     if (receivedDataLength > 0)
                     {
-                        Console.WriteLine("Received {0} bytes:\n {1}", receivedDataLength, Encoding.UTF8.GetString(Buffer));
+                        //Console.WriteLine("Received {0} bytes:\n {1}", receivedDataLength, Encoding.UTF8.GetString(Buffer));
                     }
 
                     if (DataParser != null)
@@ -104,6 +104,7 @@ namespace GalileoSkyServer
                         {
                             GalileoSkyTcpPackageResponse galileoSkyTcpPackageResponse = new GalileoSkyTcpPackageResponse();
                             galileoSkyTcpPackageResponse.ControlSum = package.ControlSum;
+                            SendMessage(galileoSkyTcpPackageResponse.ToByteArray());
                         }
                     }
 

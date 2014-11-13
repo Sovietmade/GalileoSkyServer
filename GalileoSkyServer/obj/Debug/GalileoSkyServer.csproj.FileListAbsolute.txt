@@ -10,3 +10,4 @@ C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\bin\Debug\G
 C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\bin\Debug\GalileoSkyServer.pdb
 C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.exe
 C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.pdb
+C:\Users\Юрий\Documents\GitHub\GalileoSkyServer\GalileoSkyServer\obj\Debug\GalileoSkyServer.csprojResolveAssemblyReference.cache

@@ -54,11 +54,13 @@ namespace GalileoSkyServer
                 //3.else there is nothing to do
                 if (tempTotalData[0] == 0x01)
                 {
+                    Console.WriteLine("Header: {0}", tempTotalData[0]);
+
                     byte[] bytearrayPackageLength = new byte[2];
                     bytearrayPackageLength[0] = tempTotalData[1];
                     bytearrayPackageLength[1] = tempTotalData[2];
 
-                    byte mask = 1;
+                    byte mask = (byte)(1 << 7);
                     bytearrayPackageLength[1] &= (byte)(bytearrayPackageLength[1] & ~mask);
 
                     UInt16 uint16PackageLength = BitConverter.ToUInt16(bytearrayPackageLength, 0);
@@ -77,17 +79,20 @@ namespace GalileoSkyServer
                         byte[] toParse = new byte[uint16PackageLength];
                         Array.Copy(tempTotalData, 3, toParse, 0, uint16PackageLength);
 
-                        byte[] trimmedTempTotalData = new byte[tempTotalData.Length - uint16PackageLength];
-                        Array.Copy(tempTotalData, uint16PackageLength + 5, trimmedTempTotalData, 0, tempTotalData.Length - uint16PackageLength);
+                        byte[] trimmedTempTotalData = new byte[tempTotalData.Length - (uint16PackageLength + 5)];
+                        Array.Copy(tempTotalData, uint16PackageLength + 5 - 1, trimmedTempTotalData, 0, tempTotalData.Length - (uint16PackageLength+5));
 
                         tempTotalData = trimmedTempTotalData;
 
+                        object[] paramsArr = new object[] { toParse };
                         while (toParse != null)
                         {
-                            if (mDataHandlersMap.ContainsKey(toParse[0]))
+                            byte[] tempArr = (byte[])paramsArr[0];
+
+                            if (mDataHandlersMap.ContainsKey(tempArr[0]))
                             {
-                                object[] paramsArr = new object[] { toParse };
-                                GalileoSkyData gsd = (GalileoSkyData)mDataHandlersMap[toParse[0]].Invoke(this, paramsArr);
+
+                                GalileoSkyData gsd = (GalileoSkyData)mDataHandlersMap[tempArr[0]].Invoke(this, paramsArr);
                                 galileoSkyTcpPackageData.AddGalileoSkyData(gsd);
                             }
                             else {
@@ -145,6 +150,8 @@ namespace GalileoSkyServer
 
             CutArray(ref inData, 2, inData.Length - 1);
 
+
+            Console.WriteLine("Hardware Version: {0}", hw.HW);
             return gsd;
         }
 
@@ -163,6 +170,7 @@ namespace GalileoSkyServer
 
             CutArray(ref inData, 2, inData.Length - 1);
 
+            Console.WriteLine("Software Version: {0}", sw.SW);
             return gsd;
         }
 
@@ -181,6 +189,7 @@ namespace GalileoSkyServer
 
             CutArray(ref inData, 16, inData.Length - 1);
 
+            Console.WriteLine("IMEI: {0}", imei.IMEI);
             return gsd;
         }
 
