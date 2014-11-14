@@ -10,6 +10,6 @@ namespace GalileoSkyServer
     {
         void StartServer();
         void BeginListenForIncomingConnections();
-
+        void SendCommand(UInt16 inTerminalID, String inCommand);
     }
 }

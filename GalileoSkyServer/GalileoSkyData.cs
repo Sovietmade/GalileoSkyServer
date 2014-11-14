@@ -21,6 +21,18 @@ namespace GalileoSkyServer
 
     public class GalileoSkyData
     {
+        public GalileoSkyData()
+        { 
+        
+        }
+
+        public GalileoSkyData(Type inType,object inData,byte inTag)
+        {
+            Tag = inTag;
+            TypeOfData = inType;
+            Data = inData;
+        }
+
         public byte Tag { get; set; }
 
         public object Data{ get; set; }

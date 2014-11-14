@@ -43,6 +43,7 @@ namespace GalileoSkyServer
             GalileoTcpClient galileoTcpClient = new GalileoTcpClient(client, 2048);
             IDataParser dataParser = new GalileoSkyTcpPackageParser();
             galileoTcpClient.DataParser = dataParser;
+            galileoTcpClient.DataReceived += ProccessMessageData;
 
             lock (mListOfConnectedClientsLock)
             {
@@ -55,7 +56,40 @@ namespace GalileoSkyServer
             mListener.BeginAcceptTcpClient(DoAcceptTcpClientCallback, mListener);
         }
 
+        public void SendCommand(UInt16 inTerminalID, String inCommand)
+        {
+            var q = from m in mListOfConnectedClients where m.TerminalId.TerminalIDData == inTerminalID select m;
+            GalileoTcpClient gtc = q.FirstOrDefault();
+            if (gtc != null)
+            {
+                GalileoSkyTcpPackageData command = new GalileoSkyTcpPackageData();
+                command.AddGalileoSkyData(new GalileoSkyData(typeof(ImeiData),gtc.IMEI,0x03));
+                command.AddGalileoSkyData(new GalileoSkyData(typeof(TerminalID), gtc.TerminalId, 0x04));
+
+                CommandID cid = new CommandID();
+                cid.CommandIDDData = mCommandId;
+                mCommandId++;
+
+                command.AddGalileoSkyData(new GalileoSkyData(typeof(CommandID), cid, 0xE0));
+
+                Command c = new Command();
+                c.CommandLength = (byte)inCommand.Length;
+                c.CommandData = inCommand;
+
+                command.AddGalileoSkyData(new GalileoSkyData(typeof(Command), c, 0xE1));
+                gtc.SendMessage(command.ToByteArray());
+            }
+        }
+
+        void ProccessMessageData(object sender, ReceivedDataArgs ea)
+        { 
+            //TEST
+            SendCommand(50, "MainPack 111111000");
+        }
+
         #region TcpServerFields
+
+        UInt32 mCommandId;
 
         TcpListener mListener;
 
