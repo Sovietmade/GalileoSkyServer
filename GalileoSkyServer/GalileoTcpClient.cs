@@ -105,6 +105,21 @@ namespace GalileoSkyServer
                             GalileoSkyTcpPackageResponse galileoSkyTcpPackageResponse = new GalileoSkyTcpPackageResponse();
                             galileoSkyTcpPackageResponse.ControlSum = package.ControlSum;
                             SendMessage(galileoSkyTcpPackageResponse.ToByteArray());
+
+                            object oTerimalID = package.GetGalileoSkyData(typeof(TerminalID));
+                            if (oTerimalID != null)
+                            {
+                                mTerminalID = (TerminalID)oTerimalID;
+                                
+                            }
+                            object oIMEI = package.GetGalileoSkyData(typeof(ImeiData));
+                            if (oIMEI != null)
+                            {
+                                mImeiData = (ImeiData)oIMEI;
+
+                            }
+                            //Console.WriteLine("Binary: " + ByteArrayToStringConv.ByteArrayToString(package.ToByteArray())); 
+                            //Console.WriteLine(BitConverter.ToUInt16(package.ControlSum,0));
                         }
                     }
 
@@ -137,10 +152,35 @@ namespace GalileoSkyServer
             }
         }
 
+        public TerminalID TerminalId
+        {
+            get {
+                return mTerminalID;
+            }
+            set {
+                mTerminalID = value;
+            }
+        }
+
+        public ImeiData IMEI
+        {
+            get
+            {
+                return mImeiData;
+            }
+            set
+            {
+                mImeiData = value;
+            }
+        }
+
         #endregion
 
 
         #region ---------TcpClientFields---------
+
+        private TerminalID mTerminalID;
+        private ImeiData mImeiData;
 
         protected IDataParser mDataParser;
 

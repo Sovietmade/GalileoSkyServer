@@ -8,21 +8,71 @@ using System.Reflection;
 
 namespace GalileoSkyServer
 {
+    static class ByteArrayToStringConv
+    {
+        public static string ByteArrayToString(byte[] ba)
+        {
+            StringBuilder hex = new StringBuilder(ba.Length * 2);
+            foreach (byte b in ba)
+                hex.AppendFormat("{0:x2}", b);
+            return hex.ToString();
+        }
+    }
+
     public class GalileoSkyData
     {
-        public Int32 Tag { get; set; }
+        public byte Tag { get; set; }
 
         public object Data{ get; set; }
 
         public Type TypeOfData{ get; set; }
 
-        public byte[] ToByte()
+        public byte[] ToByteArray()
         {
-            return TypeOfData != null ? (byte[])TypeOfData.GetMethod("ToByte").Invoke(Data, null) : null;
+            return TypeOfData != null ? (byte[])TypeOfData.GetMethod("ToByteArray").Invoke(Data, null) : null;
         }
     }
 
+    public class CommandID
+    { 
+        public CommandID()
+        { 
+            
+        }
 
+        public CommandID(UInt32 inCommandID)
+        {
+            CommandIDDData = inCommandID;
+        }
+
+        public UInt32 CommandIDDData { get; set; }
+
+        public byte[] ToByteArray()
+        {
+            return BitConverter.GetBytes(CommandIDDData);
+        }
+    }
+
+    public class Command
+    {
+        public Command()
+        {
+
+        }
+
+        public byte CommandLength { get; set; }
+        public String CommandData { get; set; }
+
+        public byte[] ToByteArray()
+        {
+            byte[] asByteArray = new byte[CommandLength + 1];
+            asByteArray[0] = CommandLength;
+
+            Array.Copy(Encoding.ASCII.GetBytes(CommandData), 0, asByteArray, 1, CommandLength);
+            return asByteArray;
+        }
+
+    }
 
     public class HardwareVersion
     {
@@ -38,7 +88,7 @@ namespace GalileoSkyServer
 
         public byte HW { get; set; }
 
-        public byte[] ToByte()
+        public byte[] ToByteArray()
         {
             return new byte[1] { HW };
         }
@@ -59,7 +109,7 @@ namespace GalileoSkyServer
 
         public byte SW { get; set; }
 
-        public byte[] ToByte()
+        public byte[] ToByteArray()
         {
             return new byte[1] { SW };
         }
@@ -78,7 +128,7 @@ namespace GalileoSkyServer
         }
         public String IMEI { get; set; }
 
-        public byte[] ToByte()
+        public byte[] ToByteArray()
         {
             return Encoding.ASCII.GetBytes(IMEI);
         }
@@ -98,7 +148,7 @@ namespace GalileoSkyServer
 
         public UInt16 TerminalIDData { get; set; }
 
-        public byte[] ToByte()
+        public byte[] ToByteArray()
         {
             return BitConverter.GetBytes(TerminalIDData);
         }
@@ -117,6 +167,11 @@ namespace GalileoSkyServer
         }
 
         public UInt16 PackageNumerData { get; set; }
+
+        public byte[] ToByteArray()
+        {
+            return BitConverter.GetBytes(PackageNumerData);
+        }
     }
 
     public class DateAndTime
@@ -139,6 +194,11 @@ namespace GalileoSkyServer
                 return epoch.AddSeconds(DateAndTimeData);
             }
         }
+
+        public byte[] ToByteArray()
+        {
+            return BitConverter.GetBytes(DateAndTimeData);
+        }
     }
 
     public class CoordinatesAndSatellites
@@ -158,6 +218,15 @@ namespace GalileoSkyServer
             return String.Format("Satellites: {0}, Correctness: {1}, Latitude: {2}, Longitude: {3}", SatellitesAmount, Correctness, Latitude, Longitude);
         }
 
+        public byte[] ToByteArray()
+        {
+            byte[] asByteArray = new byte[9];
+            asByteArray[0] = (byte)(SatellitesAmount | Correctness);
+            Array.Copy(BitConverter.GetBytes(Latitude), 0, asByteArray, 1, 4);
+            Array.Copy(BitConverter.GetBytes(Longitude), 0, asByteArray, 5, 4);
+            return asByteArray;
+        }
+
     }
 
     public class SpeedAndDirection
@@ -174,6 +243,14 @@ namespace GalileoSkyServer
         public override string ToString()
         {
             return String.Format("Speed: {0}, Direction: {1}", Speed, Direction);
+        }
+
+        public byte[] ToByteArray()
+        {
+            byte[] asByteArray = new byte[4];
+            Array.Copy(BitConverter.GetBytes(Speed), 0, asByteArray, 0, 2);
+            Array.Copy(BitConverter.GetBytes(Direction), 0, asByteArray, 2, 2);
+            return asByteArray;
         }
 
     }
@@ -197,6 +274,12 @@ namespace GalileoSkyServer
             return String.Format("Height: {0}", HeightData);
         }
 
+        public byte[] ToByteArray()
+        {
+            
+            return BitConverter.GetBytes(HeightData);
+        }
+
     }
 
     public class HDOP
@@ -216,6 +299,12 @@ namespace GalileoSkyServer
         public override string ToString()
         {
             return String.Format("HDOP: {0}", HDOPData);
+        }
+
+        public byte[] ToByteArray()
+        {
+
+            return new byte[]{HDOPData};
         }
 
     }
@@ -298,13 +387,24 @@ namespace GalileoSkyServer
                 " InnerPowerSupplyVoltage: " + (InnerPowerSupplyVoltage ? "1" : "0") +
                 " GPSAntenna: " + (GPSAntenna ? "1" : "0") +
                 " InnerPowerSupplyBusVoltage: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
-                " OuterVoltage: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
-                " CarStatus: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
-                " Hit: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
-                " GpsOrGlonass: " + (InnerPowerSupplyBusVoltage ? "1" : "0") +
+                " OuterVoltage: " + (OuterVoltage ? "1" : "0") +
+                " CarStatus: " + (CarStatus ? "1" : "0") +
+                " Hit: " + (Hit ? "1" : "0") +
+                " GpsOrGlonass: " + (GpsOrGlonass ? "1" : "0") +
                 " SignalQuality: " + SignalQuality +
                 " Signaling: " + (Signaling ? "1" : "0") +
                 " Alarm: " + (Alarm ? "1" : "0");
+        }
+
+        public byte[] ToByteArray()
+        {
+            byte[] asByteArray = new byte[2];
+            bool SignalQuality0 = (SignalQuality & 1) != 0;
+            bool SignalQuality1 = (SignalQuality & (1 << 1) ) != 0;
+
+            BitArray ba = new BitArray(new bool[] { Movement, Slope, iButton, SIM, GeoZone, InnerPowerSupplyVoltage, GPSAntenna, InnerPowerSupplyBusVoltage, OuterVoltage, CarStatus, Hit, GpsOrGlonass, SignalQuality0, SignalQuality1, Signaling, Alarm });
+            ba.CopyTo(asByteArray, 0);
+            return asByteArray;
         }
 
     }

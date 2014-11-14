@@ -67,15 +67,18 @@ namespace GalileoSkyServer
                     UInt16 uint16PackageLength = BitConverter.ToUInt16(bytearrayPackageLength, 0);
                     if (tempTotalData.Length >= (uint16PackageLength + 5) )
                     {
+                        //Console.WriteLine("Binary: " + ByteArrayToStringConv.ByteArrayToString(tempTotalData));
                         galileoSkyTcpPackageData = new GalileoSkyTcpPackageData();
-                        
+                        //galileoSkyTcpPackageData.Length = new byte[2];
+                        //galileoSkyTcpPackageData.Length[0] = tempTotalData[1];
+                        //galileoSkyTcpPackageData.Length[1] = tempTotalData[2];
 
                         byte[] ControlSum = new byte[2];
                         ControlSum[0] = tempTotalData[uint16PackageLength + 3];
                         ControlSum[1] = tempTotalData[uint16PackageLength + 3 + 1];
 
                         galileoSkyTcpPackageData.ControlSum = ControlSum;
-                        
+                        Console.WriteLine("Control sum: {0}", BitConverter.ToUInt16(ControlSum,0));
 
                         byte[] toParse = new byte[uint16PackageLength];
                         Array.Copy(tempTotalData, 3, toParse, 0, uint16PackageLength);
@@ -213,6 +216,45 @@ namespace GalileoSkyServer
             CutArray(ref inData, 3, inData.Length - 1);
 
             Console.WriteLine("Terminal ID: {0}", terminalId.TerminalIDData);
+            return gsd;
+        }
+
+        [PackageDataHandler(0xE0)]
+        GalileoSkyData CommandID(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0xE0;
+
+            CommandID commandID = new CommandID();
+            commandID.CommandIDDData = BitConverter.ToUInt32(inData, 1);
+
+            gsd.Data = commandID;
+            gsd.TypeOfData = typeof(CommandID);
+
+            CutArray(ref inData, 5, inData.Length - 1);
+
+            Console.WriteLine("Command ID: {0}", commandID.CommandIDDData);
+            return gsd;
+        }
+
+        [PackageDataHandler(0xE1)]
+        GalileoSkyData Command(ref byte[] inData)
+        {
+            GalileoSkyData gsd = new GalileoSkyData();
+
+            gsd.Tag = 0xE0;
+
+            Command command = new Command();
+            command.CommandLength = inData[1];
+            command.CommandData = Encoding.ASCII.GetString(inData, 2, command.CommandLength);
+
+            gsd.Data = command;
+            gsd.TypeOfData = typeof(Command);
+
+            CutArray(ref inData, 5, inData.Length - 1);
+            Console.WriteLine("Command: {0}", command.CommandData);
+           
             return gsd;
         }
 

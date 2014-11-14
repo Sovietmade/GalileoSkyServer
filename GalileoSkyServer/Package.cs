@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
@@ -30,7 +31,8 @@ namespace GalileoSkyServer
             mGalileoSkyData.Add(inData);
         }
 
-        UInt16 Modbus(byte[] buf, int len)
+
+        protected UInt16 Modbus(byte[] buf, int len)
         {
             UInt16 crc = 0xFFFF;
 
@@ -51,6 +53,12 @@ namespace GalileoSkyServer
             }
             // Note, this number has low and high bytes swapped, so use it accordingly (or swap bytes)
             return crc;
+        }
+
+        public virtual object GetGalileoSkyData(Type inType)
+        {
+           var q =  from m in mGalileoSkyData where m.TypeOfData == inType select m.Data;
+           return q.FirstOrDefault();
         }
 
         #region Package fields
@@ -85,6 +93,8 @@ namespace GalileoSkyServer
                 throw new InvalidDataException("Control summ cannot be null");
             }
         }
+
+
     }
 
     public class GalileoSkyTcpPackageData : GalileoSkyTcpPackage
@@ -95,15 +105,63 @@ namespace GalileoSkyServer
             header = 0x01;
         }
 
+
+        public byte[] Length
+        {
+            get
+            {
+                return packageLength;
+            }
+            set
+            {
+                packageLength = value;
+            }
+        }
+
         public override byte[] ToByteArray()
         {
-            throw new NotImplementedException();
+            List<byte> asByteList = new List<byte>();
+            asByteList.Add(header);
+            if (Length == null || Length.Length != 2)
+            {
+                asByteList.AddRange(new byte[] { 0x0, 0x0 }); // Length
+            }
+            else 
+            {
+
+                asByteList.AddRange(Length);
+                
+            }
+
+            foreach (var m in mGalileoSkyData)
+            {
+                asByteList.Add(m.Tag);
+                asByteList.AddRange(m.ToByteArray());
+            }
+
+            if (Length == null || Length.Length != 2)
+            {
+
+                UInt16 packetLength = (UInt16)(asByteList.Count - 3);
+                byte[] lengthAsByteArray = BitConverter.GetBytes(packetLength);
+                
+                Length = lengthAsByteArray;
+
+                asByteList[1] = lengthAsByteArray[0];
+                asByteList[2] = lengthAsByteArray[1];
+            }
+
+            ControlSum = BitConverter.GetBytes(Modbus(asByteList.ToArray(), asByteList.Count));
+
+            asByteList.AddRange(ControlSum); //ControlSum
+
+            return asByteList.ToArray();
         }
 
         #region GalileoSkyTcpPackageData fields
 
 
-        byte[] packageLength = new byte[2];
+        byte[] packageLength;
 
 
         #endregion
