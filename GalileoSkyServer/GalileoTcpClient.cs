@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
+using System.IO;
 
 namespace GalileoSkyServer
 {
@@ -13,6 +14,7 @@ namespace GalileoSkyServer
 
         public GalileoTcpClient(TcpClient inTcpClient, Int32 inReceiveBufferLength)
         {
+            mTcpClient = inTcpClient;
             mNetworkStream = inTcpClient.GetStream();
             
             Buffer = new byte[inReceiveBufferLength];
@@ -24,9 +26,14 @@ namespace GalileoSkyServer
             mNetworkStream.BeginRead(Buffer, 0, Buffer.Length, DataReceivedCallback, null);
         }
 
+        public virtual void CloseConnection()
+        {
+            mTcpClient.Close();
+        }
+
         #region ---------SendingRegion---------
 
-        public void SendMessage(byte[] inByte)
+        public virtual void SendMessage(byte[] inByte)
         {
             lock (OutcomingMessagesQ)
             {
@@ -36,7 +43,7 @@ namespace GalileoSkyServer
         }
 
 
-        private void SendMessageCallback(IAsyncResult result)
+        protected virtual void SendMessageCallback(IAsyncResult result)
         {
             //	result wont be null if current call to the SendMessageCallback is a continuation of BeginWrite execution
             //	result will be null if current call to the SendMessageCallback is a continuation of SendMessage execution 
@@ -81,13 +88,25 @@ namespace GalileoSkyServer
 
         #region ---------ReceivingRegion---------
 
-        protected void DataReceivedCallback(IAsyncResult result)
+        protected virtual void DataReceivedCallback(IAsyncResult result)
         {
             lock (mNetworkStreamLock)
             {
                 if (mNetworkStream != null)
                 {
-                    int receivedDataLength = mNetworkStream.EndRead(result);
+                    int receivedDataLength = 0;
+                    try
+                    {
+                        receivedDataLength = mNetworkStream.EndRead(result);
+                    }
+                    catch (IOException ex)
+                    {
+                        OnUnsuccessfulNetworkCommunication(null);
+                    }
+                    catch (ObjectDisposedException ex)
+                    {
+
+                    }
 
                     byte[] ReceivedData = new byte[receivedDataLength];
                     Array.Copy(Buffer, ReceivedData, receivedDataLength);
@@ -124,8 +143,18 @@ namespace GalileoSkyServer
                     }
 
                     OnPackageReceived(new ReceivedDataArgs(ReceivedData));
-
-                    mNetworkStream.BeginRead(Buffer, 0, Buffer.Length, new AsyncCallback(DataReceivedCallback), null);
+                    try
+                    {
+                        mNetworkStream.BeginRead(Buffer, 0, Buffer.Length, new AsyncCallback(DataReceivedCallback), null);
+                    }
+                    catch (IOException ex)
+                    {
+                        OnUnsuccessfulNetworkCommunication(null);
+                    }
+                    catch (ObjectDisposedException ex)
+                    { 
+                    
+                    }
                 }
             }
         }
@@ -135,6 +164,14 @@ namespace GalileoSkyServer
             if (DataReceived != null)
             {
                 DataReceived(this, ea);
+            }
+        }
+
+        protected virtual void OnUnsuccessfulNetworkCommunication(EventArgs ea)
+        {
+            if (CloseConnectionHandlers != null)
+            {
+                CloseConnectionHandlers(this, ea);
             }
         }
 
@@ -194,7 +231,10 @@ namespace GalileoSkyServer
 
         protected bool isSending;
 
+        protected TcpClient mTcpClient;
+
         public event EventHandler<ReceivedDataArgs> DataReceived;
+        public event EventHandler<EventArgs> CloseConnectionHandlers;
 
         #endregion
 

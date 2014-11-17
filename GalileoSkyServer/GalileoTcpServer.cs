@@ -44,6 +44,7 @@ namespace GalileoSkyServer
             IDataParser dataParser = new GalileoSkyTcpPackageParser();
             galileoTcpClient.DataParser = dataParser;
             galileoTcpClient.DataReceived += ProccessMessageData;
+            galileoTcpClient.CloseConnectionHandlers += CloseClientConnection;
 
             lock (mListOfConnectedClientsLock)
             {
@@ -84,7 +85,25 @@ namespace GalileoSkyServer
         void ProccessMessageData(object sender, ReceivedDataArgs ea)
         { 
             //TEST
-            SendCommand(50, "MainPack 111111000");
+            //SendCommand(50, "MainPack 111111000");
+        }
+
+        void CloseClientConnection(object sender, EventArgs ea)
+        {
+            var galileoTcpClient = sender as GalileoTcpClient;
+            if (galileoTcpClient != null)
+            {
+                galileoTcpClient.CloseConnection();
+                lock (mListOfConnectedClientsLock)
+                {
+                    mListOfConnectedClients.Remove(galileoTcpClient);
+                }
+                Console.WriteLine("Connection with client has been closed.");
+            }
+            else
+            {
+
+            }
         }
 
         #region TcpServerFields

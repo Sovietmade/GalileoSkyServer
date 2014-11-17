@@ -311,8 +311,8 @@ namespace GalileoSkyServer
             cordinatesAndSatellites.SatellitesAmount = satellites;
             cordinatesAndSatellites.Correctness = correctness;
 
-            cordinatesAndSatellites.Latitude =  BitConverter.ToInt32(inData, 2);
-            cordinatesAndSatellites.Longitude = BitConverter.ToInt32(inData, 6);
+            cordinatesAndSatellites.Latitude =  BitConverter.ToInt32(inData, 2) / 1000000;
+            cordinatesAndSatellites.Longitude = BitConverter.ToInt32(inData, 6) / 1000000;
 
             gsd.Data = cordinatesAndSatellites;
             gsd.TypeOfData = typeof(CoordinatesAndSatellites);
